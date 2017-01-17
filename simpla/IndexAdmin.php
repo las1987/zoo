@@ -87,6 +87,9 @@ class IndexAdmin extends Simpla
 		'PrettyUrlAdmin' => 'pretty_url',
 		'SeoListAdmin' => 'seo',
 		'SeoAdmin' => 'seo',
+		'PickupPointsAdmin' => 'pickuppoints',
+		'PickupPointAdmin' => 'pickuppoints',
+		
 
 	);
 

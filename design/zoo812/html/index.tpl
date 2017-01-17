@@ -703,7 +703,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 					<li><a href="/o-nas/">О нас</a></li>
 					<li><a href="/contact/">Контакты</a></li>
 					<li><a href="/sotrudnichestvo/">Сотрудничество</a></li>
-					<li class="last"><a href="/?module=NurseryView">Помощь приюту</a></li>
+					<li><a href="/?module=NurseryView">Помощь приюту</a></li>
+         				<li class="last"><a href="/proizvoditeli/">Производители</a></li>
+        				
         </ul>
     </div>
     <div style="clear: both;"></div>

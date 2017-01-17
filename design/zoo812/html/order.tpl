@@ -491,16 +491,34 @@ $(document).ready(function(){
                             </td>
                         </tr>
                     {/if}
-                    {if $order->comment}
+                    
+					{if $order->pickuppoint_id}
+                        <tr>
+                            <td>
+                                Пункт самовывоза
+                            </td>
+                            <td>
+                                {if $order->pickuppoint_url}<a target="_blank" href="/pickuppoints/{$order->pickuppoint_url}">{/if}
+									{$order->pickuppoint_address|escape}
+							    {if $order->pickuppoint_url}</a>{/if}
+
+                            </td>
+                        </tr>	
+					{/if}
+					
+					{if $order->comment}
                         <tr>
                             <td>
                                 Комментарий
                             </td>
                             <td>
-                                {$order->comment|escape|nl2br}
+								{$order->comment|escape|nl2br}
                             </td>
                         </tr>
                     {/if}
+					
+				
+	
                 </table>
                 
 				{if $order->status == 0}

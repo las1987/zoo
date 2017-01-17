@@ -73,11 +73,35 @@
 			color: #e73b3b;
 			margin-left: 12px;
 		}
+		
+		/*Стиль выбора доставка или самовывоз*/
+		.tabs input[type=radio]{
+			display:none;
+		}
+		
+		.tabs label{
+			font-size: 26px !important;
+		}
+		
+		.tabs input[type=radio] + label span {
+			display:inline-block;
+			width:40px;
+			height:40px;
+			margin:-1px 4px 0 0;
+			vertical-align:middle;
+			cursor:pointer;		
+		}
+		
+		.tabs input[type=radio]:checked + label span {	
+			background: url('../temp001/40px-done-circle-orange-ivanko-dostavka.png') left top no-repeat;
+		}
+		
 	</style>
 {/literal}
 
 
 {literal}
+	<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 	<script>
 		$(document).ready(function (){
 			$("#cost_card_block").hide();
@@ -1754,14 +1778,18 @@ $(document).ready(function (){
                                 <span id="cost_card_block">Скидка по дисконтной карте друга: <i><b><span id="cost_card">0</span></b> руб.</i><br><br></span>
                                 <i></i>
                                 <span style="display: block; padding-top: 12px !important;"><span style="color:#a5a179;">Стоимость товаров:</span> <i><b><span id="total_p">{$cart->total_price|convert}</span></b> руб.</i><br></span>
-                                <input name="weight" id="weight_cart" type="hidden" value="{$cart->weight}" />
+                                <span id="block_pickup_summ" style="display: none; padding-top: 12px !important;"><span style="color:#a5a179;">Стоимость самовывоза:</span> <i><b><span id="total_pickup_summ"></span></b> <span id="ruble">руб.</span></i><br></span>
+                                <span id="block_total_price" style="display: none; padding-top: 12px !important;"><span style="color:#a5a179;">Итого стоимость:</span> <i><b><span id="total_summ"></span></b> руб.</i><br></span>
+
+                                
+								<input name="weight" id="weight_cart" type="hidden" value="{$cart->weight}" />
                                 <input name="volume" id="volume" type="hidden" value="{$cart->volume}" />
                                 <input name="total_price" id="total_price" type="hidden" value="{$cart->total_price}" />
                                 <input name="cost" id="cost" type="hidden" value="0" />
                                 <input name="day" id="day" type="hidden" value="0" />
                                 <input name="dpd_coefficient" id="dpd_coefficient" type="hidden" value="{$cart->dpd_coefficient}" />
                             	<input name="dpd_tarif" id="dpd_tarif" type="hidden" value="" />
-                            	
+                            	<input name="pickup_summ" id="pickup_summ" type="hidden" value=""/>
                             	{if $drug_is}
                             		<input name="drug_is" id="drug_is" type="hidden" value="1" />
                             	{/if}
@@ -1789,15 +1817,182 @@ $(document).ready(function (){
 					<h2 id="ordering2">Быстрый заказ</h2>
 
                     <div class="form cart_form">                  
-                        {if $error}
-							
+                        {if $error}	
                             <div data-alert class="alert-box alert radius" style="color: white;">
                             	{if $error == 'phone'} <span style="color: white;">Пожалуйста, укажите Ваш адрес</span>{/if} 
                             	{if $error == 'empty_email'} <span style="color: white;">Пожалуйста, укажите Ваш Электронный адрес</span>{/if} 
+                            	{if $error == 'empty_pickuppoint'} <span style="color: white;">Пожалуйста, выберите пункт самовывоза</span>{/if} 
+
                                 <a href="#" class="close">&times;</a>
                             </div>
                         {/if}
-                                                						
+                        {if $available_pickuppoints}
+							{literal}
+							<script>
+								$(document).ready(function(){
+										$('#type-delivery').attr('checked',true);
+										$('#row_pickuppoint').hide();
+										
+										
+										var tabs = $('#tabs');
+										$('.tabs-content > div', tabs).each(function(i){
+											if ( i != 0 ) $(this).hide(0);
+										});
+										
+										tabs.on('click', '.tabs input', function(e){	
+											
+											var tabId = $(this).attr('value');									
+											$('.tabs-content > div').hide(0);
+											$('#' + tabId).show();
+											if (tabId == "delivery"){
+												$('#row_pickuppoint').hide();
+												$('#block_total_price').hide();
+												$('#block_pickup_summ').hide();
+											}
+											else {
+												$('#block_total_price').show();
+												$('#block_pickup_summ').show();
+												$('#row_pickuppoint').show();
+											}
+											
+										});
+										
+										var tabs_points = $('#tabs_points');
+										$('.tabs-content > div', tabs_points).each(function(i){
+											if ( i != 0 ) $(this).hide(0);
+										});
+										
+										tabs_points.on('click', '.tabs_points a', function(e){
+											e.preventDefault();
+											
+											var tabId = $(this).attr('href');
+																						
+											$('.tabs_points a',tabs_points).removeClass();
+											$(this).addClass('active');
+
+											$('#tabs_points .tabs-content > div').hide(0);
+											$(tabId).show();
+										});
+										
+									});
+									
+									function get_from_here(id){											
+										//$('#phone').focus();	
+										elem = document.getElementById('pickuppoint_address_'+id);
+										$('#pickuppoint_selected').val(elem.innerHTML);
+										delivery_summ = $('#pickuppoint_delivery_' + id).attr('value');
+										calc_delivery_summ(delivery_summ);
+										myMap.balloon.close();
+									}
+									
+									function calc_delivery_summ(value){
+										elem = document.getElementById('total_pickup_summ');
+										elem_total = document.getElementById('total_summ');
+										total_summ = $('#total_price').attr('value');
+										
+										$('#pickup_summ').attr('value', value);
+										
+										if (!elem){ return false;}
+										if (!elem_total){return false;}
+										if (delivery_summ == 0){								
+											elem.innerHTML = 'Бесплатно';
+											$('#ruble').hide();
+											elem_total.innerHTML = total_summ;}
+										else{
+											elem.innerHTML = value;
+											$('#ruble').show();
+											elem_total.innerHTML = parseInt(total_summ) + parseInt(value);
+										}
+									}		
+							</script>
+							<style>
+								#tabs li {list-style-type: none; width: 50%; float: left; text-align:center;}
+								#tabs .tabs {margin-top: 35px; min-width: 625px; max-width: 625px; width: 625px; overflow: hidden}
+								#tabs .tabs-content {padding: 20px; font-size: 16px; line-height: 21px;}
+								#tabs .tabs li a {display: block; padding: 8px 16px; font-size: 18px; line-height: 21px; color: #999;}
+								#tabs .tabs li a.active, #tabs .tabs li a:hover {color: #369;}	
+								.scroll_table .header-row{background:#E1E1E1 !important;}
+								.scroll_table .header-row th, .scroll_table td{text-align:center;}		
+								#map {height:300px; width: 100%;}
+							</style>
+							{/literal}
+							
+							<script>
+									ymaps.ready(init);
+									var myMap;
+									function init () {
+										JSONData = JSON.stringify({$available_pickuppointsJSON});
+										myMap = new ymaps.Map('map', {
+												center: [59.89444,30.26417],
+												zoom: 10
+											}, {
+												searchControlProvider: 'yandex#search'
+											}),
+											objectManager = new ymaps.ObjectManager({
+												clusterize: true,
+												gridSize: 32
+											});
+
+											myMap.geoObjects.add(objectManager);
+											
+											 
+											objectManager.add(JSONData);
+											
+									}
+							</script>
+							
+							<div id="tabs" style="">
+									<ul class="tabs">
+										<li class="tab"><input id="type-delivery" type="radio" name="deliverytype" value="delivery" checked /><label for="type-delivery"><span></span>Доставка</label></li>
+										<li class="tab"><input id="type-pickup" type="radio" name="deliverytype" value="pickup" /><label for="type-pickup"><span></span>Самовывоз</label></li>
+									</ul>
+									<div class="tabs-content">
+										<div id=delivery></div>
+										
+										<div id=pickup class="available_pickuppoints">
+											<div id="tabs_points" style="">
+												<ul class="tabs_points">
+													<li class="tab"><a class="active" href="#spisok">Списком</a></li>
+													<li class="tab"><a href="#onmap">На карте</a></li>
+												</ul>
+												<div class="tabs-content">
+													<div id=spisok>	
+														<table class="scroll_table">
+															<thead class="fixedHeader">
+																<tr class="header-row">
+																	<th></th>
+																	<th>Метро</th>
+																	<th>Адрес</th>
+				
+																	<th>График работы</th>
+																	<th>Макс. вес заказа</th>
+																	<th>Стоимость</th>
+																</tr>
+															</thead>
+															<tbody class="scroll_table_content">								
+															{foreach from=$available_pickuppoints item=available_pickuppoint}
+																<tr>
+																	<td><input type="radio" id ="pickuppoint_{$available_pickuppoint->id}" name="available_pickuppoint" value="{$available_pickuppoint->id}" onclick="get_from_here({{$available_pickuppoint->id}})"></input></td>
+																	<td>{$available_pickuppoint->metro_station}</td>
+																	<td><span id="pickuppoint_address_{$available_pickuppoint->id}">{$available_pickuppoint->address}</span>, тел: {$available_pickuppoint->phone}</td>													
+																	<td>{$available_pickuppoint->worktime}</td>
+																	<td>{$available_pickuppoint->weight_limit}</td>
+																	<td><input type="hidden" id="pickuppoint_delivery_{$available_pickuppoint->id}" value="{$available_pickuppoint->pickup_price_value|convert}"/>{if $available_pickuppoint->pickup_price_value}{$available_pickuppoint->pickup_price_value|convert} руб.{else}Бесплатно{/if}</td>
+				
+																</tr>
+															{/foreach}
+															</tbody>
+														</table>
+													</div>
+													<div id=onmap style="overflow: hidden; display: none;">
+														<div id=map></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+							</div>
+						{/if}
                         <script src="design/{$settings->theme}/js/js.jquery.cart.validator.js?ver=2"></script>
 						<div class="row collapse">
                             <div class="large-4 columns">
@@ -1817,6 +2012,8 @@ $(document).ready(function (){
                                 </div>
                             </div>
                         </div>
+
+						
 						<div class="row collapse">
                             <div class="large-4 columns">
                                 <label for="email"><span class="star">*</span>  Электронный адрес</label>
@@ -1835,6 +2032,15 @@ $(document).ready(function (){
                                 </div>
                             </div>
                         </div> 
+						<div id="row_pickuppoint" class="row collapse">
+							<div class="large-4 columns">
+                                <label for="pickuppoint_selected"><span class=""></span>  Пункт самовывоза</label>
+                            </div>
+                            <div class="large-8 columns">
+                                <input class="" name="pickuppoint_selected" type="text" id="pickuppoint_selected" value="" readonly/>
+                            </div>		
+						</div>
+						
                         <div class="row collapse">
                             <div class="large-4 columns">
                                 <label for="name"><span class=""></span> Имя, фамилия</label>

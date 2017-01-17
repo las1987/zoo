@@ -4912,9 +4912,9 @@ input[type="radio"] {
 }
 
 #secondary-menu ul {
-    min-width: 350px;
-    width: 350px;
-    max-width: 350px;
+    min-width: 400px;
+    width: 400px;
+    max-width: 400px;
     display: block;
     float: right;
 }

@@ -33,7 +33,7 @@ class OrderAdmin extends Simpla{
 			$order->weight = $this->request->post('weight', 'weight');
 			$order->volume = $this->request->post('volume', 'volume');
 			$order->cost_price = $this->request->post('cost_price', 'integer');
-			
+			$order->pickuppoint_id = $this->request->post('pickuppoint');
 			if ($this->request->post('drug')){
 				$order->drug = 1;
 				$order->address = 'АНО «Помощь бездомным собакам» 192148, г. Санкт-Петербург, Большой Смоленский пр. д.7-9, литер А';
@@ -260,6 +260,11 @@ class OrderAdmin extends Simpla{
 
 		$subtotal = 0;
 		$purchases_count = 0;
+	
+		$max_height = 0;
+		$max_width = 0;
+		$max_length = 0;
+		
 		if($order && $purchases = $this->orders->get_purchases(array('order_id'=>$order->id)))
 		{
 			// Покупки
@@ -285,7 +290,12 @@ class OrderAdmin extends Simpla{
 			
 			foreach($variants as $variant)
 				if(!empty($products[$variant->product_id]))
-					$products[$variant->product_id]->variants[] = $variant;
+					{$products[$variant->product_id]->variants[] = $variant;
+						//Проверяем максимальные габариты корзины
+						if ($max_width < $variant->width) $max_width=$variant->width;
+						if ($max_length < $variant->length) $max_length=$variant->length;
+						if ($max_height < $variant->height) $max_height=$variant->height;
+				}
 	
 			foreach($purchases as &$purchase)
 			{
@@ -391,6 +401,10 @@ class OrderAdmin extends Simpla{
 		$deliveries = $this->delivery->get_deliveries();
 		$this->design->assign('deliveries', $deliveries);
 		
+		// Пункты самовывоза
+		$pickuppoints = $this->pickuppoints->get_pickuppoins_to_delivery($order->weight, $subtotal, $order->volume, $max_height, $max_width, $max_length);
+        $this->design->assign('pickuppoints', $pickuppoints);
+		
         // Cities
         $destinations = $this->destinations->get_destinations();
         $this->design->assign('destinations', $destinations);
@@ -398,6 +412,8 @@ class OrderAdmin extends Simpla{
 		// Все способы оплаты
 		$payment_methods = $this->payment->get_payment_methods();
 		$this->design->assign('payment_methods', $payment_methods);
+		
+		//
 		
 		// Метки заказов
 	  	$labels = $this->orders->get_labels();

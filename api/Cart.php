@@ -39,6 +39,12 @@ class Cart extends Simpla
 		$cart->length = 0;
 		$cart->height = 0;
 		
+		//максимальные габариты корзины ++11.01.2017
+		$cart->max_width = 0;
+		$cart->max_length = 0;
+		$cart->max_height = 0;
+		
+		
 		$cart->dpd_coefficient = $this->settings->dpd_coefficient;
 
 		// Берем из сессии список variant_id=>amount
@@ -88,6 +94,12 @@ class Cart extends Simpla
 						$cart->height = $item->variant->height;
 						
 						$cart->volume += $cart->width * $cart->length * $cart->height*$item->amount;
+						
+						//Проверяем максимальные габариты корзины
+						if ($cart->max_width < $item->variant->width) $cart->max_width=$item->variant->width;
+						if ($cart->max_length < $item->variant->length) $cart->max_length=$item->variant->length;
+						if ($cart->max_height < $item->variant->height) $cart->max_height=$item->variant->height;
+						
 					}
 				}
 				

@@ -10,8 +10,8 @@
                         {if $p->id == 3}
                             <img src="/design/{$settings->theme|escape}/images/icons/dostavka.png" title="Доставка" alt="Доставка">
                         {/if}
-                        {if $p->id == 9}
-                            <img src="/design/{$settings->theme|escape}/images/icons/birka.png" title="Производители" alt="Производители">
+                        {if $p->id == 49}
+                            <img src="/design/{$settings->theme|escape}/images/icons/samovyvoz.png" title="Самовывоз" alt="Самовывоз">
                         {/if}
                         {if $p->id == 12}
                             <img src="/design/{$settings->theme|escape}/images/icons/paw.png" title="Питомникам" alt="Питомникам">

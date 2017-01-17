@@ -120,7 +120,8 @@ $(function() {
                     'promos'        =>'Акции',
                     'call-orders'   =>'Обратные звонки',
                     'reviews'       =>'Отзывы',
-                    'subscriptions' =>'Подписки'
+                    'subscriptions' =>'Подписки',
+					'pickuppoints' => 'Самовывоз'
 				]}
 				
 				{foreach $perms as $p=>$name}

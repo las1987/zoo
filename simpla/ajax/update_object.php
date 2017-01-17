@@ -80,6 +80,10 @@ switch ($object)
         if($simpla->managers->access('reviews'))
             $result = $simpla->promos->update_promo($id, values);
         break;
+	case 'pickuppoints':
+	  if($simpla->managers->access('pickuppoints'))
+            $result = $simpla->pickuppoints->update_pickuppoint($id, $values);
+        break;
 }
 
 header("Content-type: application/json; charset=UTF-8");

@@ -98,8 +98,8 @@ class Orders extends Simpla{
 										o.payment_method_id, o.paid, o.payment_date, o.closed, o.discount, o.coupon_code, o.coupon_discount,
 										o.date, o.user_id, o.name, o.address, o.phone, o.email, o.comment, o.status,
 										o.url, o.total_price, o.discount_price_promo, o.cost_price, o.dpd_tarif, o.note, o.card, o.destination_id, o.volume, o.weight, o.streetAbbr_dpd,
-										o.street_dpd, o.house_dpd, o.houseKorpus_dpd, o.houseApartment_dpd, o.to_apartment, o.day_to_dpd, o.promokod, o.drug, o.pay, o.update_type, o.admin_log, d.location as location
-										FROM __orders o LEFT JOIN __destinations d on o.destination_id = d.id  $where LIMIT 1");
+										o.street_dpd, o.house_dpd, o.houseKorpus_dpd, o.houseApartment_dpd, o.to_apartment, o.day_to_dpd, o.promokod, o.drug, o.pay, o.update_type, o.admin_log, d.location as location, o.pickuppoint_id, o.pickup_summ, p.address as pickuppoint_address, p.url as pickuppoint_url 
+										FROM __orders o LEFT JOIN __destinations d on o.destination_id = d.id  LEFT JOIN __pickuppoints p on o.pickuppoint_id = p.id $where LIMIT 1");
 
 		if($this->db->query($query))
 			return $this->db->result();
@@ -703,8 +703,8 @@ class Orders extends Simpla{
 		$order = $this->get_order(intval($order_id));
 		if(empty($order))
 			return false;
-		
-		$query = $this->db->placehold("UPDATE __orders o SET o.total_price=ROUND(IFNULL((SELECT SUM(p.price*p.amount)*(100-o.discount)/100 FROM __purchases p WHERE p.order_id=o.id), 0)+o.delivery_price*(1-o.separate_delivery)-o.coupon_discount+o.cost_price-o.discount_price_promo), modified=NOW() WHERE o.id=? LIMIT 1", $order->id);
+		//++11.01.2017 lubomirov
+		$query = $this->db->placehold("UPDATE __orders o SET o.total_price=ROUND(IFNULL((SELECT SUM(p.price*p.amount)*(100-o.discount)/100 FROM __purchases p WHERE p.order_id=o.id), 0)+o.delivery_price*(1-o.separate_delivery)-o.coupon_discount+o.cost_price-o.discount_price_promo + IFNULL(o.pickup_summ,0)), modified=NOW() WHERE o.id=? LIMIT 1", $order->id);
 		$this->db->query($query);
 		
 		$query = $this->db->placehold("UPDATE __orders o SET o.volume=FORMAT(IFNULL((SELECT SUM(p.volume*p.amount) FROM __purchases p WHERE p.order_id=o.id), 0), 4), modified=NOW() WHERE o.id=? LIMIT 1", $order->id);

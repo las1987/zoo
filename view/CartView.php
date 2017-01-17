@@ -25,7 +25,6 @@ class CartView extends View
 
         $my_destinations = null;
         $my_dpd_citys = null;
-
         // @FIXME паеренести это в /simpla
         require_once($_SERVER['DOCUMENT_ROOT'] . '/files/geo/geo.php');
 
@@ -94,12 +93,13 @@ class CartView extends View
 
         // Если нажали оформить заказ
         if (isset($_POST['checkout'])) {
-            $order->address = $_REQUEST['address'];
-
+        
+			$order->address = $_REQUEST['address'];
+			
             //echo $order->address;
 
             $email = $this->request->post('email');
-
+			
             /*
             if (($email == 'andrew.petrov@yandex.ru')or($email == 'qzarf@bk.ru')or($email == 'grebansk@rambler.ru')
                 or($email == 'pavel.nikolaev@mailfrospam.com')or($email == 'adwan@mailfrospam.com')or($email == 'maxxxxx@mailforspam.com')
@@ -182,7 +182,14 @@ class CartView extends View
             $order->id_new = $id_new;
             $order->delivery_id = $this->request->post('delivery_id', 'integer');
             $order->name = $this->request->post('name');
-            $order->email = $this->request->post('email');
+			//++11.01.2017 Lubomirov Alex Доставка либо самовывоз
+			if ($this->request->post('deliverytype') == 'pickup'){
+				$order->pickuppoint_id = $this->request->post('available_pickuppoint');	
+				$order->pickup_summ = $this->request->post('pickup_summ');
+				$this->design->assign('pickuppoint_address', $this->request->post('pickuppoint_selected'));
+			}
+			//
+       	    $order->email = $this->request->post('email');
 
             $a = $b = null;
 
@@ -429,6 +436,9 @@ class CartView extends View
             $this->design->assign('card', $order->card);
             $this->design->assign('comment', $order->comment);
 
+			
+
+
             $captcha_code = $this->request->post('captcha_code', 'string');
 
             // Скидка
@@ -477,11 +487,13 @@ class CartView extends View
             //{
             //	$this->design->assign('error', 'captcha');
             //}
-            if (empty($order->phone)) {
+            if (empty($order->phone)) {			
                 $this->design->assign('error', 'phone');
             } elseif (empty($order->email)) {
                 $this->design->assign('error', 'empty_email');
-            } else {
+            } elseif(($this->request->post('deliverytype') == 'pickup') && empty($order->pickuppoint_id)){
+				$this->design->assign('error', 'empty_pickuppoint');
+			} else {
                 require_once($_SERVER['DOCUMENT_ROOT'] . '/api/Simpla.php');
 
                 ////////// Коннектимся к БД ///////////////////////////////////////////////////////////////////////
@@ -646,7 +658,8 @@ class CartView extends View
                     $this->orders->update_order($order->id, array('delivery_price' => $delivery->price, 'separate_delivery' => $delivery->separate_payment));
                 }
                 ////////////////////////////////////////////////////////////////////
-
+					
+				
                 $user_id = $order->user_id;
 
                 $day_x = "2016-01-22 22:00:00";
@@ -1396,7 +1409,6 @@ class CartView extends View
             $this->design->assign('coupon_request', true);
 
         $cart = $this->cart->get_cart();
-
         $purchases = $cart->purchases;
 
         $drug_is = false;
@@ -1410,8 +1422,13 @@ class CartView extends View
         if ($drug_is) {
             $this->design->assign('drug_is', $drug_is);
         }
-
+		
+		$available_pickuppoints = $this->pickuppoints->get_pickuppoins_to_delivery($cart->weight, $cart->total_price, $cart->volume, $cart->max_height*100, $cart->max_width*100, $cart->max_length*100);
+		$available_pickuppointsJSON = $this->pickuppoints->get_pickuppoints_JSON($available_pickuppoints, true);
+		
         // Выводим корзину
+		$this->design->assign("available_pickuppointsJSON", $available_pickuppointsJSON);
+		$this->design->assign("available_pickuppoints", $available_pickuppoints);
         return $this->design->fetch('cart.tpl');
     }
 }

@@ -338,9 +338,58 @@ li.variant_weight inpit, li.variant_width inpit, li.variant_length inpit, li.var
 	min-width: 95px;
 	max-width: 95px;
 }
+/*Настройки цен самовывоза*/
+#options_block {
+	background-color: #f0f0f0;
+	border: 1px dotted #d0d0d0;
+	clear: both;
+	overflow: hidden;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	margin-bottom: 20px;
+	width: 100%;
+}
+
+#options_block  ul{
+	border-bottom: 1px dotted #d0d0d0;
+	overflow: hidden;
+	width: 100%;
+	padding-bottom: 2px;
+	padding-left:20px;
+	padding-top: 2px;
+	clear: left;
+}
+
+#options_block ul li {
+	float: left;
+	display: block;
+	width:10%;
+	overflow: hidden;
+	margin: 1px 3px;
+}
+
+#options_block span.add {
+    margin-left: 30px;
+    clear: left;
+    margin-top: 5px;
+    display: block;
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    background-image: url(../images/plus-circle.png);
+}
+
+#options ul li {
+	padding-top:10px;
+}
+
+#options ul li img{
+	padding-top:5px;
+}
 
 
-
+#options_block .del_option{
+	text-align: right;
+}
 
 /* Варианты товара */
 #variants_block {
@@ -353,7 +402,7 @@ li.variant_weight inpit, li.variant_width inpit, li.variant_length inpit, li.var
 	margin-bottom: 20px;
 	width: 940px;
 }
-#variants_block ul  {
+#variants_block ul{
 	overflow: hidden;
 	padding-bottom: 2px;
 	padding-left:20px;

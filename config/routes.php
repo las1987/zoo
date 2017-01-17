@@ -166,6 +166,17 @@ return array(
         'pattern' => '~^/contact/$~',
         'class' => 'FeedbackView',
     ),
+	
+	# Самовывоз
+	array(
+		'pattern' => '~^/pickuppoints/$~',
+		'class' => 'PickuppointsView',
+	),
+	 array(
+        'pattern' => '~^/pickuppoints/([^/]+)/$~',
+        'class' => 'PickuppointView',
+        'aliases' => array('pickuppoint_url'),
+    ),
 
     // главная страница
     array(

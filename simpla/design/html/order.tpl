@@ -303,7 +303,8 @@
                 </select>
             </h1>
             <a href="{url view=print id=$order->id}" target="_blank" style="padding-top: 9px;"><i class="fa fa-print p3"></i>Печать заказа</a>
-        </div>
+			{if $order->pickuppoint_id}<p style="font-size:20px;">Заказ на самовывоз!</p>{/if}
+		</div>
         <div class="large-3 columns">
             <div id=next_order>
                 {if $prev_order}
@@ -471,7 +472,7 @@
 	           Общий вес<b> {$order->weight} кг</b>
 	        </div>
         {/if}
-        
+        		
         {if $order}
 	        <div class="subtotal">
 	           Общий объем<b> {$order->volume} м3</b>
@@ -507,12 +508,20 @@
         	Доставка (дней): <b>{$order->day_to_dpd}</b><br>
         {/if}
         
+		{if $order->pickuppoint_id}
+			Стоимость самовывоза: <b>{$order->pickup_summ} руб</b><br>
+		{/if}
+		
         {if $order}
 	        <div class="subtotal">
 	          Итого: <b>{$order->total_price} {$currency->sign}</b>   
 	        </div>
         {/if}
         
+	
+              
+
+				
 		{if $order->drug == 1}		
 	        <div class="block discount layer">
 	        	<h2>Статус оплаты заказа в приют</h2>
@@ -731,7 +740,20 @@
                         {$order->comment|escape|nl2br}
                     </div>
                 </li>
-                
+                <li>
+					<label class=property>Пункт самовывоза</label>
+					<div class="edit_order_detail" style='display:none'>
+						<select class=status name="pickuppoint" style="font-size:15px; width:100%;">
+							<option value='0' {if $order->pickuppoint_id == 0}selected{/if}></option>
+							{foreach $pickuppoints as $pu}
+								<option value='{$pu->id}' {if $order->pickuppoint_id == $pu->id}selected{/if}>{$pu->address}</option>
+							{/foreach}
+						</select>
+					</div>
+					<div class="view_order_detail">
+						{$order->pickuppoint_address}
+					</div>
+				</li>
                 {if $order->cost_price != 0}
                 <li>
                     <label class=property>Доставка DPD</label>

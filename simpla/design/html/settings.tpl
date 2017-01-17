@@ -4,6 +4,7 @@
     {if in_array('delivery', $manager->permissions)}<li><a href="index.php?module=DestinationsAdmin">Локации</a></li>{/if}
 	{if in_array('payment', $manager->permissions)}<li><a href="index.php?module=PaymentMethodsAdmin">Оплата</a></li>{/if}
 	{if in_array('managers', $manager->permissions)}<li><a href="index.php?module=ManagersAdmin">Менеджеры</a></li>{/if}
+	{if in_array('pickuppoints', $manager->permissions)}<li><a href="index.php?module=PickupPointsAdmin">Самовывоз</a></li>{/if}
 	<li><a href="index.php?module=TownsAdmin">Доставка по городам</a></li>
 	<li><a href="index.php?module=AttentionAdmin">Плашка</a></li>	
 {/capture}

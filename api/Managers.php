@@ -57,6 +57,7 @@ class Managers extends Simpla
         'subscriptions',
         'towns',
         'users',
+		'pickuppoints',
     );
 		
 	public $passwd_file = "simpla/.passwd";

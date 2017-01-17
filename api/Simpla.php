@@ -101,6 +101,7 @@ class Simpla
         'synonym'        => 'Synonym',
         'users'         => 'Users',
         'variants'      => 'Variants',
+		'pickuppoints'	=> 'PickupPoints',
     );
 	
 	// Созданные объекты

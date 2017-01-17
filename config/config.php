@@ -9,11 +9,11 @@ db_server = "localhost"
 
 ;Пользователь базы данных
 ;db_user = "simpla"
-db_user = "zoo812"
+db_user = "root"
 
 ;Пароль к базе
 ;db_password = "fG34DbZg23TXiOpE"
-db_password = "puoCh1uW0noh"
+db_password = ""
 
 ;Имя базы
 db_name = "simpla"
