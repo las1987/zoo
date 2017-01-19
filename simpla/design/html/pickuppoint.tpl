@@ -66,7 +66,45 @@
 		}
 		return false;
 	});
+	
+	url_touched = true;
+	if($('input[name="url"]').val() == generate_url() || $('input[name="url"]').val() == '')
+		url_touched = false;
+	
+	$('input[name="url"]').change(function() { url_touched = true; });	
+	$('input[name="name"]').keyup(function() { set_meta(); });
+	
+	function set_meta()
+	{
+		if(!url_touched)
+			$('input[name="url"]').val(generate_url());	
+	}
+	
+	function generate_url()
+	{
+		url = $('input[name="name"]').val();
+		url = url.replace(/[\s]+/gi, '-');
+		url = translit(url);
+		url = url.replace(/[^0-9a-z_\-]+/gi, '').toLowerCase();	
+		return url;
+	}
+
+	function translit(str)
+	{
+		var ru=("А-а-Б-б-В-в-Ґ-ґ-Г-г-Д-д-Е-е-Ё-ё-Є-є-Ж-ж-З-з-И-и-І-і-Ї-ї-Й-й-К-к-Л-л-М-м-Н-н-О-о-П-п-Р-р-С-с-Т-т-У-у-Ф-ф-Х-х-Ц-ц-Ч-ч-Ш-ш-Щ-щ-Ъ-ъ-Ы-ы-Ь-ь-Э-э-Ю-ю-Я-я").split("-")   
+		var en=("A-a-B-b-V-v-G-g-G-g-D-d-E-e-E-e-E-e-ZH-zh-Z-z-I-i-I-i-I-i-J-j-K-k-L-l-M-m-N-n-O-o-P-p-R-r-S-s-T-t-U-u-F-f-H-h-TS-ts-CH-ch-SH-sh-SCH-sch-'-'-Y-y-'-'-E-e-YU-yu-YA-ya").split("-")   
+		var res = '';
+		for(var i=0, l=str.length; i<l; i++)
+		{ 
+			var s = str.charAt(i), n = ru.indexOf(s); 
+			if(n >= 0) { res += en[n]; } 
+			else { res += s; } 
+		} 
+		return res;  
+	}	
 	});
+	
+	
 </script>
 
 {/literal}
@@ -196,10 +234,23 @@ ymaps.ready(function () {
 					<label class=property>Телефон</label><input id=phone name=phone type="text" value="{$pickuppoint->phone}"/> 
 				</div>
 			</div>
-				
 			<div class="row collapse">
 				<div class="large-12 columns">
-					<label class=property>Сайт</label><input id=url name=url type="text" value="{$pickuppoint->url}"/> 
+					<label class=property>Сайт</label><input id=web_site name=web_site type="text" value="{$pickuppoint->web_site}"/>
+				</div>
+			</div>
+					
+			<div class="row collapse">
+				<div class="large-12 columns">
+					<label class=property>url</label>
+					<div class="row collapse">
+						<div class="large-2 columns">
+							<span>pickuppoints/</span>
+						</div>
+						<div class="large-10 columns">
+							<input id=url name=url type="text" value="{$pickuppoint->url}"/>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row collapse">
@@ -250,6 +301,11 @@ ymaps.ready(function () {
 			<input class="button_green button_save" type="submit" name="" value="Сохранить" />
 			<span class="add" id="add_pickuppoints_options"><i class="dash_link">Добавить стоимость доставки</i></span>
 		</div>
+	</div>
+	
+	<div class="block layer">
+		<h2>Дополнительное описание</h2>
+		<textarea name="body" class="editor_small">{$pickuppoint->body|escape}</textarea>
 	</div>
 	
 	<!-- Описание товара (The End)-->

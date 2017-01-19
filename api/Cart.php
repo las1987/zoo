@@ -44,6 +44,8 @@ class Cart extends Simpla
 		$cart->max_length = 0;
 		$cart->max_height = 0;
 		
+		//запрет на самовывоз варианта и тем самым запрет самовывоза всей корзины ++ 17.01.2017
+		$cart->pickup_ban = false;
 		
 		$cart->dpd_coefficient = $this->settings->dpd_coefficient;
 
@@ -100,6 +102,8 @@ class Cart extends Simpla
 						if ($cart->max_length < $item->variant->length) $cart->max_length=$item->variant->length;
 						if ($cart->max_height < $item->variant->height) $cart->max_height=$item->variant->height;
 						
+						//Проверяем запрет на самовывоз
+						if ($item->variant->pickup_ban) $cart->pickup_ban = true;
 					}
 				}
 				

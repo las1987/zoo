@@ -200,16 +200,19 @@ function init () {
 					</div>
 				</div>
 				<div class="row collapse">
-					<div class="large-5 columns">
+					<div class="large-12 columns">
 						<div id="map"></div>	
 					</div>
-					<div class="large-6 columns">
+				</div>
+				<div class="row collapse">
+					<div class="large-5 columns">
 						<p>Адрес: {$pickuppoint->address}</p>	
 						<p>Тел: {$pickuppoint->phone}</p>	
 						<p>График работы: {$pickuppoint->worktime}</p>
-						
-					</div>
-					
+					</div>					
+					<div class="large-6 columns">
+						{$pickuppoint->body}
+					</div>	
 				</div>
              </div>
         </div>

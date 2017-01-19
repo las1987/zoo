@@ -1833,7 +1833,6 @@ $(document).ready(function (){
 										$('#type-delivery').attr('checked',true);
 										$('#row_pickuppoint').hide();
 										
-										
 										var tabs = $('#tabs');
 										$('.tabs-content > div', tabs).each(function(i){
 											if ( i != 0 ) $(this).hide(0);
@@ -2032,6 +2031,7 @@ $(document).ready(function (){
                                 </div>
                             </div>
                         </div> 
+						 {if $available_pickuppoints}
 						<div id="row_pickuppoint" class="row collapse">
 							<div class="large-4 columns">
                                 <label for="pickuppoint_selected"><span class=""></span>  Пункт самовывоза</label>
@@ -2040,7 +2040,7 @@ $(document).ready(function (){
                                 <input class="" name="pickuppoint_selected" type="text" id="pickuppoint_selected" value="" readonly/>
                             </div>		
 						</div>
-						
+						{/if}
                         <div class="row collapse">
                             <div class="large-4 columns">
                                 <label for="name"><span class=""></span> Имя, фамилия</label>

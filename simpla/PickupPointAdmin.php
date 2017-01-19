@@ -25,7 +25,10 @@ class PickupPointAdmin extends Simpla
 	 		$pickuppoint->size_limit 		= $this->request->post('size_limit');			
 	 		$pickuppoint->weight_limit     	= $this->request->post('weight_limit');
 	 		$pickuppoint->sides_limit 		= $this->request->post('sides_limit');
+	 		$pickuppoint->body				= $this->request->post('body');
 	 		$pickuppoint->enabled          	= $this->request->post('enabled', 'boolean');
+	 		$pickuppoint->web_site			= $this->request->post('web_site');
+			
 			
 			//Расчитываем объем, который может принять пункт выдачи
 			$one_side = $this->request->post('sides_limit') / 3;
@@ -59,18 +62,18 @@ class PickupPointAdmin extends Simpla
                     }
                 }
             	
-			/*	if(!empty($pickuppoint->id)){
-					$this->pickuppoints->delete_pickuppoint_options($pickuppoint->id);
-				}
-				foreach($optionsData as $index=> $option){
-					var_dump($option);
-					$this->pickuppoints->add_pickuppoint_option($pickuppoint->id, $option);
-					
-				}*/			
+
+			unset($optionsData, $tmp);				
 			}
-		    unset($optionsData, $tmp);
 			
-			var_dump($pickuppoint_options);
+			if ($pickuppoint->id){
+				$this->pickuppoints->delete_pickuppoint_options($pickuppoint->id);	
+				if(is_array($pickuppoint_options)){
+		  		  	foreach($pickuppoint_options as $i=>$pickuppoint_option)
+						$this->pickuppoints->add_pickuppoint_option($pickuppoint->id, $pickuppoint_option, $i);
+	  	    	}				
+			}
+			
 		}
 		else
 		{
@@ -79,7 +82,6 @@ class PickupPointAdmin extends Simpla
 			{
 				$pickuppoint = $this->pickuppoints->get_pickuppoint($pickuppoint->id);
 				$pickuppoint_options = $this->pickuppoints->get_pickuppoint_options($pickuppoint->id);
-				
 			}
 		}
 		$this->design->assign('pickuppoint_options', $pickuppoint_options);		

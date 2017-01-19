@@ -1423,12 +1423,14 @@ class CartView extends View
             $this->design->assign('drug_is', $drug_is);
         }
 		
-		$available_pickuppoints = $this->pickuppoints->get_pickuppoins_to_delivery($cart->weight, $cart->total_price, $cart->volume, $cart->max_height*100, $cart->max_width*100, $cart->max_length*100);
-		$available_pickuppointsJSON = $this->pickuppoints->get_pickuppoints_JSON($available_pickuppoints, true);
-		
+		//Проверяем можно ли доставить корзину в пункт самовывоза
+		if(!$cart->pickup_ban){		
+			$available_pickuppoints = $this->pickuppoints->get_pickuppoins_to_delivery($cart->weight, $cart->total_price, $cart->volume, $cart->max_height*100, $cart->max_width*100, $cart->max_length*100);
+			$available_pickuppointsJSON = $this->pickuppoints->get_pickuppoints_JSON($available_pickuppoints, true);
+			$this->design->assign("available_pickuppointsJSON", $available_pickuppointsJSON);
+			$this->design->assign("available_pickuppoints", $available_pickuppoints);
+		}
         // Выводим корзину
-		$this->design->assign("available_pickuppointsJSON", $available_pickuppointsJSON);
-		$this->design->assign("available_pickuppoints", $available_pickuppoints);
         return $this->design->fetch('cart.tpl');
     }
 }

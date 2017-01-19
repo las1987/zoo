@@ -83,7 +83,7 @@ class PickupPoints extends Simpla
 		else
 			$filter = $this->db->placehold('p.url = ?', $id);
 	  
-		$query = $this->db->placehold("SELECT p.id, p.name, p.metro_station, p.sides_limit, p. size_limit, p.address, p.latitude, p.longitude, p.photo, p.url, p.worktime, p.phone, p.weight_limit, p.summ_limit, p.dimensions_limit ,p.enabled FROM __pickuppoints p WHERE $filter LIMIT 1", $filter);
+		$query = $this->db->placehold("SELECT p.id, p.name, p.metro_station, p.sides_limit, p. size_limit, p.address, p.latitude, p.longitude, p.photo, p.url, p.worktime, p.phone, p.weight_limit, p.summ_limit, p.dimensions_limit ,p.enabled, p.body FROM __pickuppoints p WHERE $filter LIMIT 1", $filter);
 
 		if($this->db->query($query))
 			return $this->db->result();
@@ -95,8 +95,7 @@ class PickupPoints extends Simpla
 	*
 	* Добавляем новый пункт самовывоза 
 	*
-	*/
-	
+	*/	
    public function add_pickuppoint($pickuppoint){
 		$query = $this->db->placehold("INSERT INTO __pickuppoints SET ?%", $pickuppoint);
 		if(!$this->db->query($query))
@@ -135,9 +134,6 @@ class PickupPoints extends Simpla
 			/*Удаление данных о пункте самовывоза*/
 			$query = $this->db->placehold("DELETE FROM __pickuppoints WHERE id=?", $id);
 			$this->db->query($query);	
-			
-		/*	$query = $this->db->placehold("UPDATE __products SET brand_id=NULL WHERE brand_id=?", $id);
-			$this->db->query($query);	*/
 		}	
 	}
  
@@ -161,27 +157,24 @@ class PickupPoints extends Simpla
 	*	
 	*
 	*/
-   	public function add_pickuppoint_option($id, $pickuppoint_option){
-	//	$query = $this->db->placehold("INSERT IGNORE INTO __pickuppoints_options SET id=?, pickuppoint_id=?, summ_min_value=?, summ_max_value = ?, pickup_price_value=?, ", $pickuppoint_option->id, $id, $pickuppoint_option->summ_min_value, $pickuppoint_option->summ_max_value, $pickuppoint_option->pickup_price_value);
+   	public function add_pickuppoint_option($id, $pickuppoint_option, $option_id){
+		$query = $this->db->placehold("INSERT IGNORE INTO __pickuppoints_options SET id=?, pickuppoint_id=?, summ_min_value=?, summ_max_value = ?, pickup_price_value=?", intval($option_id) + 1, intval($id), intval($pickuppoint_option->summ_min_value), intval($pickuppoint_option->summ_max_value), intval($pickuppoint_option->pickup_price_value));
 
-		var_dump($pickuppoint_option);
-		/*	if(!$this->db->query($query))
+		if(!$this->db->query($query))
         {
 			return false;
         }
 		$id = $this->db->insert_id();
-		return $id;*/
+		return $id;
 	}   
 	
-	
 	public function get_pickuppoint_options($pickuppoint_id){
-	  $query = $this->db->placehold("SELECT po.id, po.pickuppoint_id, po.summ_min_value, po.summ_max_value, po.pickup_price_value FROM __pickuppoints_options po WHERE pickuppoint_id=?", intval($pickuppoint_id));
-
+	  $query = $this->db->placehold("SELECT po.id, po.pickuppoint_id, po.summ_min_value, po.summ_max_value, po.pickup_price_value FROM __pickuppoints_options po WHERE po.pickuppoint_id=? ORDER BY po.summ_min_value", intval($pickuppoint_id));
+		
       if($this->db->query($query))
          return $this->db->results();
       else
          return false;
-
 	}
 	/*
 	*
