@@ -230,14 +230,12 @@ class PickupPoints extends Simpla
 	*/
 	public function get_pickuppoints_JSON($pickuppoints, $cart=false){
 		if (empty($pickuppoints)) return false;
-		
 		$PickupPointArray = Array();
 		$i=0;
 		foreach($pickuppoints as $pickuppoint){
 			$result = array("type" => "Feature",
 							"id" => $pickuppoint->id,
-							"geometry" => array("type" => "Point",
-												
+							"geometry" => array("type" => "Point",	
 												"coordinates" => array($pickuppoint->latitude, $pickuppoint->longitude)), 
 												"properties" => array(
 												
@@ -248,11 +246,15 @@ class PickupPoints extends Simpla
 												
 			);
 			$PickupPointArray[] = $result; 
+			
 			$i++;
 		}
+	
 		$PickupPointsArray = Array("type"=> "FeatureCollection",
 								   "features" => $PickupPointArray);
-		$result = json_encode($PickupPointsArray, JSON_UNESCAPED_UNICODE);
+								   
+			
+		$result = json_encode($PickupPointsArray);
 		return $result;						
 	}
 	
