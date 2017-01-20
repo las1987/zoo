@@ -159,7 +159,7 @@ class PickupPoints extends Simpla
 	*
 	*/
    	public function add_pickuppoint_option($id, $pickuppoint_option, $option_id){
-		$query = $this->db->placehold("INSERT IGNORE INTO __pickuppoints_options SET pickuppoint_id=?, summ_min_value=?, summ_max_value = ?, pickup_price_value=?", intval($id), intval($pickuppoint_option->summ_min_value), intval($pickuppoint_option->summ_max_value), intval($pickuppoint_option->pickup_price_value));
+		$query = $this->db->placehold("INSERT IGNORE INTO __pickuppoints_options SET id=?, pickuppoint_id=?, summ_min_value=?, summ_max_value = ?, pickup_price_value=?", intval($option_id) + 1, intval($id), intval($pickuppoint_option->summ_min_value), intval($pickuppoint_option->summ_max_value), intval($pickuppoint_option->pickup_price_value));
 		if(!$this->db->query($query))
         {
 			return false;
