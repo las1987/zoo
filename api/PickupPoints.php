@@ -144,6 +144,7 @@ class PickupPoints extends Simpla
    *   
    */   
    	public function delete_pickuppoint_options($id){
+		
 		if(!empty($id))
 		{
 			$query = $this->db->placehold("DELETE FROM __pickuppoints_options WHERE pickuppoint_id=?", $id);
@@ -158,8 +159,7 @@ class PickupPoints extends Simpla
 	*
 	*/
    	public function add_pickuppoint_option($id, $pickuppoint_option, $option_id){
-		$query = $this->db->placehold("INSERT IGNORE INTO __pickuppoints_options SET id=?, pickuppoint_id=?, summ_min_value=?, summ_max_value = ?, pickup_price_value=?", intval($option_id) + 1, intval($id), intval($pickuppoint_option->summ_min_value), intval($pickuppoint_option->summ_max_value), intval($pickuppoint_option->pickup_price_value));
-
+		$query = $this->db->placehold("INSERT IGNORE INTO __pickuppoints_options SET pickuppoint_id=?, summ_min_value=?, summ_max_value = ?, pickup_price_value=?", intval($id), intval($pickuppoint_option->summ_min_value), intval($pickuppoint_option->summ_max_value), intval($pickuppoint_option->pickup_price_value));
 		if(!$this->db->query($query))
         {
 			return false;
@@ -238,7 +238,7 @@ class PickupPoints extends Simpla
 							"id" => $pickuppoint->id,
 							"geometry" => array("type" => "Point",
 												
-												"coordinates" => [$pickuppoint->latitude, $pickuppoint->longitude]), 
+												"coordinates" => array($pickuppoint->latitude, $pickuppoint->longitude)), 
 												"properties" => array(
 												
 																"balloonContentBody"=> '<address><strong><a href="/pickuppoints/'.$pickuppoint->url .'">' .$pickuppoint->name ."</a></strong><br>".$pickuppoint->address."<br>тел.:".$pickuppoint->phone."</address>" . ($cart ? '<br><button onclick="get_from_here(' .$pickuppoint->id .', this);return false;">Заберу отсюда</button>' : ""),
