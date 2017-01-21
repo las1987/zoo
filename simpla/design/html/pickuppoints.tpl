@@ -158,11 +158,6 @@ $(function() {
         }
 	});	
 
-	// Выделить ожидающие
-	$("#check_unapproved").click(function() {
-		$('#list input[type="checkbox"][name*="check"]').attr('checked', false);
-		$('#list .unapproved input[type="checkbox"][name*="check"]').attr('checked', true);
-	});	
 
 	// Удалить 
 	$("a.delete").click(function() {
@@ -172,7 +167,7 @@ $(function() {
 		$(this).closest("form").submit();
 	});
 	
-	// Одобрить
+	// Включить/выключить
 	$("a.enable").click(function() {
 		var line        = $(this).closest(".row");
 		var id          = line.find('input[type="checkbox"][name*="check"]').val();
