@@ -27,10 +27,16 @@ class PickupPointsAdmin extends Simpla
 		if(!empty($ids))
 		switch($this->request->post('action'))
 		{
-			 case 'approve':
+			case 'enable':
 		    {
 				foreach($ids as $id)
-					/*$this->reviews->update_review($id, array('approved'=>1));   */ 
+					$this->pickuppoints->update_pickuppoint($id, array('enabled'=>1));   
+		        break;
+		    }
+			case 'disable':
+		    {
+				foreach($ids as $id)
+					$this->pickuppoints->update_pickuppoint($id, array('enabled'=>0));   
 		        break;
 		    }
 		    case 'delete':
