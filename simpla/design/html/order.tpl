@@ -303,7 +303,7 @@
                 </select>
             </h1>
             <a href="{url view=print id=$order->id}" target="_blank" style="padding-top: 9px;"><i class="fa fa-print p3"></i>Печать заказа</a>
-			{if $order->pickuppoint_id}<p style="font-size:20px;">Заказ на самовывоз!</p>{/if}
+			{if $order->pickuppoint_id}<p style="font-size:20px;color:#FF0000;"><b>Заказ на самовывоз!</b></p>{/if}
 		</div>
         <div class="large-3 columns">
             <div id=next_order>

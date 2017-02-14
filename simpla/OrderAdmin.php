@@ -404,6 +404,16 @@ class OrderAdmin extends Simpla{
 		// Пункты самовывоза
 		$pickuppoints = $this->pickuppoints->get_pickuppoins_to_delivery($order->weight, $subtotal, $order->volume, $max_height, $max_width, $max_length);
         $this->design->assign('pickuppoints', $pickuppoints);
+		$this->design->assign('max_height', $max_height);
+		$this->design->assign('max_width', $max_width);
+		$this->design->assign('max_length', $max_length);
+		
+		
+		//Пункт самовывоза для п/ф		
+		if ($order->pickuppoint_id>0){
+			$pickuppoint = $this->pickuppoints->get_pickuppoint(intval($order->pickuppoint_id));
+			$this->design->assign('pickuppoint', $pickuppoint);
+		}
 		
         // Cities
         $destinations = $this->destinations->get_destinations();
